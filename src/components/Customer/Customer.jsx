@@ -174,6 +174,7 @@ const AllCustomer = () => {
                                     <th>Customer Code</th>
                                     <th>Place</th>
                                     <th>Work Order No</th>
+                                    <th>Work Order Amount</th>
                                     <th>Work Classification</th>
                                     <th>Work Order Date</th>
                                     <th>Audit Scope</th>
@@ -192,6 +193,7 @@ const AllCustomer = () => {
                                         <td>{customer.customerCode}</td>
                                         <td>{customer.place}</td>
                                         <td>{customer.workOrderNo}</td>
+                                        <td>{customer.workOrderAmount}</td>
                                         <td>{customer.workClassification}</td>
                                         <td>{customer.workOrderDate ? new Date(customer.workOrderDate).toLocaleDateString() : "N/A"}</td>
                                         <td>{customer.auditScope}</td>
