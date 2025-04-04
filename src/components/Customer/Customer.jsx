@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const AllCustomer = () => {
     const [data, setData] = useState([]);
@@ -97,6 +99,27 @@ const AllCustomer = () => {
 
     // 
 
+    const exportToExcel = () => {
+        if (filteredData.length === 0) {
+            toast.warning("No data available to export.");
+            return;
+        }
+        // Filter out unwanted fields and format date
+        const formattedData = filteredData.map(({ _id, createdAt, updatedAt, __v, workOrderDate, ...rest }) => ({
+            ...rest,
+            workOrderDate: workOrderDate ? new Date(workOrderDate).toLocaleDateString("en-GB") : "N/A", // Format date as DD/MM/YYYY
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(formattedData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Customer");
+
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const dataBlob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(dataBlob, "Customer.xlsx");
+    };
+
+
     return (
         <div className="container mt-1">
             <h5 className="text-center mb-0">All Customers</h5>
@@ -119,17 +142,18 @@ const AllCustomer = () => {
                 </button>
 
                 {/* Search Input and Button */}
-                <div className="d-flex">
-                    <input
+                <div className="d-flex ">
+                    <div className=""><input
                         type="text"
                         className="form-control form-control-sm me-2"
                         placeholder="Search by Customer Code..."
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                    />
-                    <button className="btn btn-primary btn-sm fs-6" onClick={handleSearch}>
+                    /></div>
+                    <div className="px-2"><button className="btn btn-primary btn-sm fs-6" onClick={handleSearch}>
                         Search
-                    </button>
+                    </button></div>
+                    <div>                    <button className="btn btn-success btn-sm fs-6" onClick={exportToExcel}>Download Excel</button></div>
                 </div>
             </div>
 
